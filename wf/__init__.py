@@ -5,7 +5,7 @@ Read assembly and evaluation for metagenomics data
 import subprocess
 from pathlib import Path
 
-from latch import message, small_task, workflow
+from latch import small_task, workflow
 from latch.types import LatchAuthor, LatchDir, LatchFile, LatchMetadata, LatchParameter
 
 METASSEMBLY_DOCS = LatchMetadata(
@@ -27,35 +27,28 @@ METASSEMBLY_DOCS.parameters = {
     "read_2": LatchParameter(
         display_name="Read 2",
         description="Paired-end read 2 file.",
-        section_title="MEGAHIT",
     ),
     "sample_name": LatchParameter(
         display_name="Sample name",
         description="Sample name (will define output file names)",
-        section_title="MEGAHIT",
     ),
     "k_min": LatchParameter(
         display_name="Minimum kmer size",
         description="Must be odd and <=255",
-        section_title="MEGAHIT",
     ),
     "k_max": LatchParameter(
         display_name="Maximum kmer size",
         description="Must be odd and <=255",
-        section_title="MEGAHIT",
     ),
     "k_step": LatchParameter(
         display_name="Increment of kmer size of each iteration",
-        section_title="MEGAHIT",
         description="Must be even and <=28",
     ),
     "min_count": LatchParameter(
         display_name="Minimum multiplicity for filtering (k_min+1)-mers",
-        section_title="MEGAHIT",
     ),
     "min_contig_len": LatchParameter(
         display_name="Minimum length of contigs to output",
-        section_title="MEGAHIT",
     ),
 }
 
@@ -65,18 +58,12 @@ def megahit(
     read_1: LatchFile,
     read_2: LatchFile,
     sample_name: str,
-    min_count: int,
-    k_min: int,
-    k_max: int,
-    k_step: int,
-    min_contig_len: int,
+    min_count: str,
+    k_min: str,
+    k_max: str,
+    k_step: str,
+    min_contig_len: str,
 ) -> LatchDir:
-
-    # Check input values are as expected for MEGAHit
-    if all([k_min % 2 != 0, k_max % 2 != 0, k_step % 2 == 0]) != True:
-        title = "Invalid K list selected"
-        body = "Both k min and k max have to be odd numbers, while k step must be even."
-        message(typ="error", data={"title": title, "body": body})
 
     output_dir_name = f"MEGAHIT-{sample_name}"
     output_dir = Path(output_dir_name).resolve()
@@ -108,15 +95,15 @@ def megahit(
 
 
 @workflow(METASSEMBLY_DOCS)
-def metagenomic_assembly(
+def metassembly(
     read_1: LatchFile,
     read_2: LatchFile,
     sample_name: str = "assembly_sample",
-    min_count: int = 2,
-    k_min: int = 21,
-    k_max: int = 141,
-    k_step: int = 12,
-    min_contig_len: int = 200,
+    min_count: str = "2",
+    k_min: str = "21",
+    k_max: str = "141",
+    k_step: str = "12",
+    min_contig_len: str = "200",
 ) -> LatchDir:
     return megahit(
         read_1=read_1,
