@@ -10,6 +10,7 @@ from latch.types import LatchAuthor, LatchDir, LatchFile, LatchMetadata, LatchPa
 
 METASSEMBLY_DOCS = LatchMetadata(
     display_name="MetAssembly",
+    documentation="https://github.com/jvfe/metassembly_latch/blob/main/README.md",
     author=LatchAuthor(
         name="jvfe",
         github="https://github.com/jvfe",
@@ -134,20 +135,7 @@ def metassembly(
     k_step: str = "12",
     min_contig_len: str = "200",
 ) -> LatchDir:
-    """Assembly for metagenomics data
-
-    MetAssembly
-    -----------
-
-    MetAssembly is a workflow for assembly of metagenomics data.
-    It provides as end results both the assembled contigs as well as
-    evaluation reports of said assembly.
-
-    MetAssembly is a workflow composed of:
-        - [MEGAHIT](https://github.com/voutcn/megahit) for assembly of input reads
-        - [Quast](https://github.com/ablab/quast), specifically MetaQuast, for assembly evaluation.
-
-    """
+    """Assembly for metagenomics data"""
     assembly_dir = megahit(
         read_1=read_1,
         read_2=read_2,
