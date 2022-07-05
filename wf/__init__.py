@@ -22,31 +22,40 @@ METASSEMBLY_DOCS.parameters = {
     "read_1": LatchParameter(
         display_name="Read 1",
         description="Paired-end read 1 file.",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
     ),
     "read_2": LatchParameter(
         display_name="Read 2",
         description="Paired-end read 2 file.",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
+    ),
+    "sample_name": LatchParameter(
+        display_name="Sample name",
+        description="Sample name (will define output file names)",
+        section_title="MEGAHIT",
     ),
     "k_min": LatchParameter(
         display_name="Minimum kmer size",
         description="Must be odd and <=255",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
     ),
     "k_max": LatchParameter(
         display_name="Maximum kmer size",
         description="Must be odd and <=255",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
     ),
     "k_step": LatchParameter(
         display_name="Increment of kmer size of each iteration",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
         description="Must be even and <=28",
+    ),
+    "min_count": LatchParameter(
+        display_name="Minimum multiplicity for filtering (k_min+1)-mers",
+        section_title="MEGAHIT",
     ),
     "min_contig_len": LatchParameter(
         display_name="Minimum length of contigs to output",
-        header="MEGAHIT",
+        section_title="MEGAHIT",
     ),
 }
 
@@ -72,7 +81,7 @@ def megahit(
     output_dir_name = f"MEGAHIT-{sample_name}"
     output_dir = Path(output_dir_name).resolve()
     _megahit_cmd = [
-        "megahit",
+        "/root/megahit",
         "--min-count",
         min_count,
         "--k-min",

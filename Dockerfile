@@ -11,11 +11,15 @@ ENV PATH=$CONDA_DIR/bin:$PATH
 # Get MegaHIT and Quast
 RUN conda create -y -n metassembly python=3.6
 RUN conda install -y -n metassembly -c bioconda megahit quast
-ENV META_ENV /opt/conda/envs/metassembly
-ENV PATH=$META_ENV/bin:$PATH
+ENV META_ENV /opt/conda/envs/metassembly/bin
+
+# Create symlink
+RUN ln -s $META_ENV/megahit /root/megahit
+RUN ln -s $META_ENV/metaquast.py /root/metaquast.py 
 
 
-COPY data /root/
+
+#COPY data /root/
 # STOP HERE:
 # The following lines are needed to ensure your build environement works
 # correctly with latch.
