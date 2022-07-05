@@ -64,7 +64,6 @@ def megahit(
     k_step: str,
     min_contig_len: str,
 ) -> LatchDir:
-
     output_dir_name = f"MEGAHIT-{sample_name}"
     output_dir = Path(output_dir_name).resolve()
     _megahit_cmd = [
@@ -94,6 +93,36 @@ def megahit(
     return LatchDir(str(output_dir), f"latch:///{output_dir_name}")
 
 
+@small_task
+def metaquast(
+    assembly_dir: LatchDir,
+    sample_name: str,
+) -> LatchDir:
+
+    assembly_name = f"{sample_name}.contigs.fa"
+    assembly_fasta = Path(assembly_dir.local_path, assembly_name)
+
+    output_dir_name = f"MetaQuast_{sample_name}"
+    output_dir = Path(output_dir_name).resolve()
+
+    _metaquast_cmd = [
+        "/root/metaquast.py",
+        "--rna-finding",
+        "--no-sv",
+        "--max-ref-number",
+        "0",
+        "-l",
+        sample_name,
+        "-o",
+        output_dir_name,
+        str(assembly_fasta),
+    ]
+
+    subprocess.run(_metaquast_cmd)
+
+    return LatchDir(str(output_dir), f"latch:///{output_dir_name}")
+
+
 @workflow(METASSEMBLY_DOCS)
 def metassembly(
     read_1: LatchFile,
@@ -105,7 +134,21 @@ def metassembly(
     k_step: str = "12",
     min_contig_len: str = "200",
 ) -> LatchDir:
-    return megahit(
+    """Assembly for metagenomics data
+
+    MetAssembly
+    -----------
+
+    MetAssembly is a workflow for assembly of metagenomics data.
+    It provides as end results both the assembled contigs as well as
+    evaluation reports of said assembly.
+
+    MetAssembly is a workflow composed of:
+        - [MEGAHIT](https://github.com/voutcn/megahit) for assembly of input reads
+        - [Quast](https://github.com/ablab/quast), specifically MetaQuast, for assembly evaluation.
+
+    """
+    assembly_dir = megahit(
         read_1=read_1,
         read_2=read_2,
         sample_name=sample_name,
@@ -115,3 +158,4 @@ def metassembly(
         k_step=k_step,
         min_contig_len=min_contig_len,
     )
+    return metaquast(assembly_dir=assembly_dir, sample_name=sample_name)
